@@ -475,6 +475,8 @@
               objs.canvasCaption.style.opacity = calcValues(values.canvasCaption_opacity,currentYOffset);
               objs.canvasCaption.style.transform = `translate3d(0,${calcValues(values.canvasCaption_translateY,currentYOffset)}%,0)`;
 
+            } else {
+              objs.canvasCaption.style.opacity = values.canvasCaption_opacity[0];
             }
           }
 
@@ -494,10 +496,19 @@
     for(let i = 0; i < currentScene; i++) {
       prevScrollHeight += sceneInfo[i].scrollHeight;
     }
-    
+    if(dealyedYOffset < prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
+      document.body.classList.remove('scroll-effect-end');
+
+    }
+
     if(dealyedYOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
       enterNewScene = true;
-      currentScene++;
+      if(currentScene === sceneInfo.length - 1) {
+        document.body.classList.add('scroll-effect-end');
+      }
+      if(currentScene < sceneInfo.length - 1) {
+        currentScene++;
+      }
       document.body.setAttribute('id',`show-scene-${currentScene}`);
 
     }
@@ -543,9 +554,26 @@
 
   // window.addEventListener('DOMContentLoaded', setLayout);  // 각 스크롤 섹션의 높이 세팅, load시점보다 더 빨리 실행됨
   window.addEventListener('load', ()=>{
+
+    
     document.body.classList.remove('before-load');
     setLayout();
     sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
+
+    let tempYOffset = yOffset;
+    let tempScrollCount = 0;
+
+    if(yOffset > 0) {
+      let siId = setInterval(()=>{
+        scrollTo(0, tempYOffset);
+        tempYOffset += 5;
+
+        if(tempScrollCount > 20) {
+          clearInterval(siId);
+        }
+        tempScrollCount++;      
+      }, 20);
+    }
 
     window.addEventListener('scroll', () => {
       yOffset = window.pageYOffset;  //현재 스크롤한 위치
@@ -559,14 +587,18 @@
     });
 
     window.addEventListener('resize', () => {
-      if(window.innerWidth > 600) {
-        setLayout();
+      if(window.innerWidth > 900) {
+        window.location.reload();
       }
-      sceneInfo[3].values.rectStartY = 0;
     });
 
     // 모바일 기기의 방향을 바꿀때 일어나는 이벤트
-    window.addEventListener('orientationchange', setLayout);
+    window.addEventListener('orientationchange', ()=>{
+      scrollTo(0,0);
+      setTimeout(()=>{
+        window.location.reload();
+      }, 500); //화면전환 후 0.5초 후에 setLayout함수 실행
+    });
     
     document.querySelector('.loading').addEventListener('transitionend',(e)=>{
       document.body.removeChild(e.currentTarget);

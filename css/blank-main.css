@@ -27,6 +27,13 @@ a {
 body.before-load {
   overflow: hidden;
 }
+body.before-load .container {
+  display: none;
+}
+.container {
+  /* iPhone에서 가로 스크롤 방지 */
+  overflow-x: hidden;
+}
 /* 헤더 */
 
 .global-nav {
@@ -52,6 +59,9 @@ body.before-load {
   position: fixed;
   top: 0;
   background: rgba(255,255,255,0.1);
+  -webkit-backdrop-filter: saturate(180%) blur(15px);  /*ios 대응 */
+  -moz-backdrop-filter: saturate(180%) blur(15px);  /*ios 대응 */
+  -o-backdrop-filter: saturate(180%) blur(15px);  /*ios 대응 */
   backdrop-filter: saturate(180%) blur(15px);
 }
 .global-nav-links,
@@ -172,12 +182,15 @@ body.before-load {
 }
 .canvas-caption {
   max-width: 1000px;
-  margin: 0 auto;
+  margin: -24rem auto 0;
   padding:0 1rem;
   font-size: 1.2rem;
   color: #888;
 }
 
+.normal-content {
+  margin-bottom: 10rem;
+}
 
 /* 푸터 */
 .footer {
@@ -204,7 +217,9 @@ body.before-load {
   display: block;
   will-change: transform, opacity;
 }
-
+.scroll-effect-end .sticky-elem {
+  display: none !important;
+}
 .sticky-elem-canvas {
   top: 0;
   height: 100%;
@@ -306,6 +321,7 @@ body.before-load {
     padding: 0;
   }
   .canvas-caption {
+    margin-top: -8rem;
     font-size: 2rem;
     padding: 0;
   }
