@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>부드러운 감속의 원리</title>
+  <style>
+    body {height: 500vh;}
+    .rect {
+      position: fixed;
+      top: 200px;
+      left: 0;
+      width: 0;
+      height: 200px;
+      background: blue;
+    }
+  </style>
+</head>
+<body>
+  <div class="rect"></div>
+</body>
+<script>
+
+  const rect = document.querySelector('.rect');
+  let acc = 0.1;
+  let dealyedYOffset = 0;
+  let rafId;
+  let rafStatus;
+
+  window.addEventListener('scroll', () => {
+    if(!rafStatus) {
+      rafId = requestAnimationFrame(render);
+      rafStatus = true;
+    }
+  })
+  function render() {
+    dealyedYOffset = dealyedYOffset + ((pageYOffset - dealyedYOffset) * acc);
+    rect.style.width = `${dealyedYOffset}px`;
+
+    rafId = requestAnimationFrame(render);
+
+    if (Math.abs(pageYOffset - dealyedYOffset) < 1) {
+      cancelAnimationFrame(rafId);
+      rafStatus = false;
+    }
+  }
+  render();
+</script>
+</html>
